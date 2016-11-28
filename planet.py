@@ -2,18 +2,18 @@ import numpy as np
 import scipy.constants as cst
 
 PLANET_DICT = {
-    'Sun': (2.E30, np.array([0., 0., 0.]), np.array([0., 0., 0.])),
-    'Jupiter': (2.E27, np.array([-5.4, -7.6E-1, 1.2E-1]), np.array([9.7E-4, -7.1E-3, 7.9E-6])),
+    'Sun': (1.988544E30, np.array([0., 0., 0.]), np.array([0., 0., 0.])),
+    'Jupiter': (1.89813E27, np.array([-5.399632, -7.643480E-1, 1.239975E-1]), np.array([9.684588E-4, -7.121879E-3, 7.927815E-6])),
 }
 
 
 def prepare_test():
-    test_mass = 7.3E10
-    test_position = (PLANET_DICT['Jupiter'][1] * ((1. / 3.) ** (2. / 3.))) + np.array([0., 0, 1.E-5])
+    test_mass = 1E2
+    test_position = (PLANET_DICT['Jupiter'][1] * ((1. / 3.) ** (2. / 3.)))
     test_velocity = PLANET_DICT['Jupiter'][2] * ((1. / 3.) ** (- 1. / 3.))
-
+    
     PLANET_DICT['Test'] = (test_mass, test_position, test_velocity)
-    # PLANET_DICT.pop('Jupiter')
+    #PLANET_DICT.pop('Jupiter')
 
 
 prepare_test()
