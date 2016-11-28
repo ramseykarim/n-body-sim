@@ -1,5 +1,8 @@
 # Ignore photos and LaTeX remnants
 
+*.pyc
+*.idea*
+*.idea/*
 *.png
 *.pdf
 *.tex

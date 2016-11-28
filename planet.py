@@ -1,23 +1,33 @@
 import numpy as np
 import scipy.constants as cst
 
-PLANET_DICT = {'Sun': (2.e30, np.array([0., 0., 0.]), np.array([0., 0., 0.])),
-               'Earth': (6.e24, np.array([1.5e11, 0, 0]), np.array([0., 3.e4, 0])),
-               'Jupiter': (2.e27, np.array([(5.2 * 1.5e11), 0., 0.]), np.array([0., 1.3e4, 0.])),
-               'Test': (1.e29, np.array([(3.2 * 1.5e11), 0., 0.]), np.array([0., 2.3e4, 0.])),
-               'Pluto?': (6.e23, np.array([(40. * 1.5e11), 0., 0.]), np.array([0., 4.e3, 0.])),
-               }
+PLANET_DICT = {
+    'Sun': (2.E30, np.array([0., 0., 0.]), np.array([0., 0., 0.])),
+    'Jupiter': (2.E27, np.array([-5.4, -7.6E-1, 1.2E-1]), np.array([9.7E-4, -7.1E-3, 7.9E-6])),
+}
+
+
+def prepare_test():
+    test_mass = 7.3E10
+    test_position = (PLANET_DICT['Jupiter'][1] * ((1. / 3.) ** (2. / 3.))) + np.array([0., 0, 1.E-5])
+    test_velocity = PLANET_DICT['Jupiter'][2] * ((1. / 3.) ** (- 1. / 3.))
+
+    PLANET_DICT['Test'] = (test_mass, test_position, test_velocity)
+    # PLANET_DICT.pop('Jupiter')
+
+
+prepare_test()
 
 
 class Planet:
     def __init__(self, name, (mass, position, velocity)):
         self.name = name  # String
         self.mass = mass  # Float
-        self.position = position  # Numpy ndarray
-        self.velocity = velocity  # Numpy ndarray
+        self.position = position * cst.au  # Numpy ndarray
+        self.velocity = velocity * cst.au / (60. * 60. * 24.)  # Numpy ndarray
         self.forces = {}  # {'Mars': False, 'Earth': ndarray}
         self.init_forces()
-        self.history = [[], []]
+        self.history = np.array([]).reshape([0, 3])
 
     def calculate_all_interactions(self, planet_list):
         for planet in planet_list:
@@ -31,7 +41,7 @@ class Planet:
             gravity_vector = direction * gravity_force
             return gravity_vector
         else:
-        	return -1. * other_planet.forces[self.name]
+            return -1. * other_planet.forces[self.name]
 
     def get_acceleration(self, other_planet_name):
         force = self.forces[other_planet_name]
@@ -63,9 +73,8 @@ class Planet:
         self.init_forces()
 
     def record(self, offset):
-        diff = self.position - offset
-        self.history[0].append(diff[0])
-        self.history[1].append(diff[1])
+        diff = (self.position - offset) / cst.au
+        self.history = np.concatenate([self.history, [diff]], axis=0)
 
 
 def distance(planet1, planet2):
